@@ -1,3 +1,13 @@
+//
+// functional.js
+//
+// Annotated examples for "Functional JavaScript" by Michael Fogus
+//
+// To execute any example, preface the call with "r = " and run
+// the file at the command-line with node:
+//
+// node functional.js
+//
 var _ = require('underscore');
 
 // adding .apply to a function call allows you to pass in a new this
@@ -5,6 +15,10 @@ var _ = require('underscore');
 // and receive the new function for future use
 //
 // APPLY takes an ARRAY
+//
+// .apply is useful when passing an outer function's "arguments" collection
+// into a returned function en-masse: use _.toArray(arguments) to make it
+// a *real* array
 //
 function splat(func) {
   return function(array) {
@@ -164,8 +178,8 @@ mergeResults(
 
 function existy(x) { return x != null }; // != instead of !== handles both null and undefined
 function truthy(x) { return (x !== false) && existy(x) }; // separates false from non-existent
-// what if we want to execute something only if a conditional is true?
-function doWhen(pred, func) { // whenDo more readable to me: when X, do Y
+// what if we want to execute something only when a conditional is true?
+function doWhen(pred, func) { // whenDo more readable to me: when X, do Y... order matches arguments
   if (truthy(pred))
     return func();
   else
@@ -234,7 +248,7 @@ function lyricSegment(n) {
 function song(start, end, lyricGen) { // accept function to execute as 3rd arg
   return _.reduce( // reduce to an array of lyric lines
     _.range(start,end,-1), // iterate over a range, descending
-    function(lyrics, n) {
+    function(lyrics, n) {  // accept the context and the current element
       return lyrics.concat(lyricGen(n));
     },
     [] // context: passed in as first arg to iterator
@@ -267,7 +281,7 @@ onlyEven(nums); //=> [ 2, 4 ]
 
 // The identity function returns its argument
 var data = { a: 1, b: 2 };
-_.map(data, _.identity); //=> [ 1, 2 ]
+_.map(data, _.identity); //=> [ 1, 2 ] // when used on properties, returns value, not key
 _.map(data, function(v,k) { return [ k, v ]; }); //=> [ [ 'a', 1 ], [ 'b', 2 ] ]
 // map passes value, key, collection to iterator: accept whichever you need
 
@@ -276,14 +290,14 @@ _.map(data, function(v,k) { return [ k, v ]; }); //=> [ [ 'a', 1 ], [ 'b', 2 ] ]
 function allOf() {
   return _.reduceRight(
     arguments,
-    function(current_truth, f) { return current_truth && f(); },
+    function(current_truth, f) { return current_truth && f(); }, // context and current element
     true
   );
 }
 function anyOf() {
   return _.reduceRight(
     arguments,
-    function(current_truth, f) { return current_truth || f(); },
+    function(current_truth, f) { return current_truth || f(); }, // context and current element
     false
   );
 }
